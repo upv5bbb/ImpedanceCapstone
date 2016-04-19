@@ -1,0 +1,28 @@
+\begin{thebibliography}{1}
+
+\bibitem{Bendat1971}
+J.~S. Bendat and A.~G. Piersol.
+\newblock {\em Random Data: Analysis and Measurement Procedures.}
+\newblock Wiley-Interscience, 1971.
+
+\bibitem{Lamport1994}
+L.~Lamport.
+\newblock {\em \LaTeX: a document preparation system}.
+\newblock Addison Wesley, 2nd edition, 1994.
+
+\bibitem{Oppenheim1975}
+A.~V. Oppenheim and R.~W. Schafer.
+\newblock {\em Digital Signal Processing.}
+\newblock Prentice-Hall, Inc., 1975.
+
+\bibitem{Papoulis1965}
+A.~Papoulis.
+\newblock {\em Probability, Random Variables, and Stochastic Processes}.
+\newblock McGraw-Hill Book Company, 1965.
+
+\bibitem{PhysRev.104.563}
+H.~C. Torrey.
+\newblock Bloch equations with diffusion terms.
+\newblock {\em Phys. Rev.}, 104(3):563--565, Nov 1956.
+
+\end{thebibliography}
