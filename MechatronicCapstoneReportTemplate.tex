@@ -24,40 +24,17 @@
 
 \input{Title}
 
-
 %---Executive Summary
-\subsection*{Executive Summary{{\color{red}\ *}}}
-
-Here is a suggested outline for Mechatronics ME 495 reports. Since the projects of all groups are different, feel free to modify the organization of this format to meet your project requirements. However, note that some sections ({\color{red}\bf{*}}) are required. 
+\input{Executive_Summary}
 
 %---Introduction
-\subsection*{Introduction}
-
-\noindent --Problem definition.
-
-\noindent --Functional requirements
-
-\noindent --Design approach, etc.
+\input{Introduction}
 
 %---The Design
-\subsection*{The Design}
-
-\subsubsection*{ ---Description}
-
-\subsubsection*{ ---Analysis}
-Results of the modeling, MATLAB analysis, or other analysis that support the design.
-\subsubsection*{ --- Mechanical}
-\subsubsection*{ --- Electrical}
-\subsubsection*{ --- Computational}
-\subsubsection*{ --- Hardware}
-\subsubsection*{ --- Software}
-\subsubsection*{ --- Integration}   
+\input{Design} 
 
 %---Prototype
-\subsection*{Prototype}
-\subsubsection*{ --- Purpose}
-\subsubsection*{ --- Description \& Implementation}
-\subsubsection*{ --- Testing Results}Comparisons of experimental performance with the design analysis.
+\input{Prototype}
 
 %---Risk and Liability
 \input{Risk}
@@ -65,28 +42,18 @@ Results of the modeling, MATLAB analysis, or other analysis that support the des
 \input{Ethical}
 %---Impact on Society
 \input{Impact_society}
-
 %---Impact on the Environment
-\subsection*{Impact on the Environment{{\color{red}\ *}}}
-
+\input{Impact_Environment}
 %---Cost and Engineering Economics
-\subsection*{Cost and Engineering Economics{{\color{red}\ *}}}
-
+\input{Cost}
 %---Codes and Standards
-\subsection*{Codes and Standards{{\color{red}\ *}}}
+\input{Codes}
 
 %---Conclusions
-\subsection*{Conclusions{\color{red}\ *}}
-\subsubsection*{ --- Continued Development}
-\subsubsection*{ --- Final Product Configuration}
+\input{Conclusions}
 
 %---Bibliography
-\subsection*{Bibliography{\color{red}\ *}}
--- Books, Articles, Data Sheets, etc., Cited in the body. 
-
-See the \verb|.tex| file for the commands that build the following bibliography using \BibTeX. Examples of applications that can be used to manage the \BibTeX\  file include \verb|JabRef| (windows) and \verb|BibDesk| (os x).
-\bibliographystyle{plain}		% (uses file "plain.bst")
-\bibliography{Mechatronics}	% expects file "Mechatronics.bib"
+\input{Bibliography}
 
 %---Appendices
 \subsection*{Appendices{\color{red}\ *}}
