@@ -1,10 +1,10 @@
-close all; 
-%% System   
-M = 1;
-Fss = 20;
-M_desired = 50;
-K_desired = 60;
-B_desired = 20;
+    close all; 
+    %% System   
+    M = 1;
+    Fss = 5;
+    M_desired = 0.6;
+    K_desired = 10;
+B_desired = 60;
 %% Simulation
 sim('Impedance_Controller_new')
  figure('units','normalized','outerposition',[0 0 1 1])
