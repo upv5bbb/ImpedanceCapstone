@@ -21,10 +21,6 @@ Rmot = 4;
 zeta = abs(log((OS)/100))/(sqrt(pi^2+(log(OS/100))^2));    % Damping Ratio
 Ts = .75;           % Settling Time
 wn = 4/zeta/Ts;   % Natural Frequency
-%% position based
-s = tf('s');
-int = 1/s;
-
 %% Define Plant and Kp
 plant = tf(Ka*Km*N/r,[M+J*(N^2)/(r^2) B/(r^2)]);
 Kp = (2*zeta*wn*(r*(M+J*((N^2)/(r^2))))-B/r)/(Ka*Km*N);        % Proportional Gain from PI
@@ -108,3 +104,48 @@ imax
 tmax
 vmax
 rmax
+%% Discrete Control
+%---
+PrintToFile = 0; % Set to 0 to print header file in Command Window only
+
+HeaderFileName = ...
+'Users\Jeff\Documents\Capstone\ImpedanceCapstone\ControllerHeader.h';
+%-----continuous:
+fs=2000;        %---Sampling frequency for discrete filter
+T=1/fs;         %---Sampling period
+s = tf('s');
+PI = Kp + Ki/s;
+sPI = series(plant,PI);
+%-----discrete equivalent:
+plantd=c2d(plant,T,'tustin');
+PId=c2d(PI,T,'tustin');
+sPId=series(plantd,PId);
+
+%---Biquad Cascade
+% SOS is an L by 6 matrix with the following structure:
+%         SOS = [ b01 b11 b21  1 a11 a21  
+%                 b02 b12 b22  1 a12 a22
+%                 ...
+%                 b0L b1L b2L  1 a1L a2L ]
+[b,a]=tfdata(PId,'v');       %---get discrete system coefficients
+[sos,gain]=tf2sos(b,a);     %---convert to biquads
+[ns,n]=size(sos);
+for j=1:3                   %---Apply the gain to the final biquad
+    sos(ns,j)=gain*sos(ns,j);
+end
+
+if PrintToFile
+    fid=fopen(HeaderFileName,'W');    
+else
+    fid=1;   
+end
+
+%---Structure for cascade
+comment=['PI controller'];
+PrintToBiquadFHeaderFile(fid, sos, 'myFilter', T, comment);
+
+if fid~=1
+    fclose(fid);
+end 
+return
+
