@@ -9,11 +9,12 @@ Where
 \epsilon = M+\frac{JN^{2}}{r^{2}}
 \end{equation}
 
-\begin{figure*}[t]
-	\centering
-	\includegraphics[width=1\linewidth]{../Functional_Specifications_Mapping}
-	\caption{}
-	\label{fig:Functional_Specifications_Mapping}
+\begin{figure*}[th]
+\centering
+\includegraphics[width=1\linewidth]{Images/Functional_Specifications_Mapping}
+\caption{}
+\label{fig:Functional_Specifications_Mapping}
 \end{figure*}
+
 The transfer function depends on the parameters of both the reference and actual systems, as predicted, but not in any clearly identifiable way. The mapping was generated numerically using successive approximation to determine what applied force would result in the current requirement exceeding the limitations of the amplifier, about 4.8 A. The parameters varied were the mass and damping, as the relationship between the spring and acceleration was less complex and more intuitive and the input force was a critical component of any mapping.
 The mapping shown is just a small portion of the effective range. We selected this portion because it demonstrates the very small force that can be applied when the reference system has very low mass and damping while showing the relationships between damping, mass and force. The maximum value of force shown is near 111 N which is approximately the limit of the load cell range. Theoretically, the force possible to apply would continue to increase beyond this point but the load cell would not read it as a greater force, so our system cannot handle greater forces regardless. If the load cell range was not the limiting factor, it is presumed that the force would increase with the damping and mass until the torque required to prevent the acceleration of the real system going beyond the reference system's response for the input force. In this way, the lower range of the the functional specification mapping can be seen as dependent on the ability of the motor to increase the acceleration of the real system and the higher range of the functional specification mapping can be seen as dependent on the ability of the motor to decrease the acceleration of the real system.
