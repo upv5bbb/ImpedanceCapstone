@@ -1,1 +1,55 @@
 \subsubsection*{ --- Computational}
+The closed loop continuous time transfer function of the complete system was 
+\begin{equation}
+v_{act}=\frac{s^{2}}{s^{2}+\frac{K_{P}K_{A}K_{M}N}{r(M+\frac{JN^{2}}{r^{2}})}s+\frac{K_{I}K_{A}K_{M}N}{r(M+\frac{JN^{2}}{r^{2}})}}
+\end{equation}
+which is second order. This fact allowed us to find the controller gains analytically from specific relations between the damping ratio and natural frequency of a second order system and its overshoot and settling time, respectively. The damping ratio can be related to the overshoot by
+\begin{equation}
+\zeta=|\frac{\ln{\frac{OS}{100}}}{\sqrt{\pi^{2}+(ln{\frac{OS}{100}})^{2}}}|
+\end{equation}
+Where
+\begin{equation}
+OS=Percent Overshoot
+\end{equation}
+The natural frequency can be related to the settling time by
+\begin{equation}
+\omega_{n}=\frac{4}{\zeta T_{s}}
+\end{equation}
+Solving for $ K_{I} and K_{P} $ gives
+\begin{equation}
+K_{I}=\frac{\omega_{n}^{2}r(M+\frac{JN^{2}}{r^{2}})}{K_{A}K_{M}N}
+\end{equation}
+\begin{equation}
+K_{P}=\frac{2\omega_{n}\zeta r(M+\frac{JN^{2}}{r^{2}})}{K_{A}K_{M}N}
+\end{equation}
+With these gains, we used MATLAB's "c2d" built-in function to develop a biquad cascade of the discrete time transfer function of the controller utilizing Tustin's approximation. This was written to a header file for C that could be used in the final program.
+In addition to finding the appropriate control gains and implementing them through a biquad cascade, we needed to also develop a biquad cascade, by hand, for computing the response of the reference system to the human input force. MATLAB was not used because we wanted a symbolic relationship between the coefficients of the biquad and the reference system parameters in order to enable the user to update the mass, spring and damping while the program was running. The reference system's continuous time transfer function was
+\begin{equation}
+\frac{v_{ref}}{F}=\frac{s}{M_{ref}s^{2}+B_{ref}s+K_{ref}}
+\end{equation}
+To compute Tustin's approximation for a discrete time transfer function, a substitution for s can be made
+\begin{equation}
+s=\frac{2(1-z^{-1})}{T(1+z^{-1})}
+\end{equation}
+Where
+\begin{equation}
+T= sample\ period
+\end{equation}
+The result is a discrete time transfer function of the form
+\begin{equation}
+H(z)=\frac{b_{0}+b_{1}z^{-1}+b_{2}z^{-2}}{a_{0}+a_{1}z^{-1}+a_{2}z^{-2}}
+\end{equation}
+For our system, the coefficients were
+\begin{eqnarray}
+b_{0}=\alpha \\
+b_{1}=0 \\
+b_{2}=-\alpha \\
+a_{0}=1 \\
+a_{1}=\alpha(-K_{ref}-\frac{4M_{ref}}{T}) \\
+a_{2}=\alpha(\frac2M_{ref}{T}-B_{ref}+\frac{K_{ref}T}{2})
+\end{eqnarray}
+Where
+\begin{equation}
+\alpha=(\frac{2M_{ref}}{T}+B_{ref}+\frac{K_{ref}T}{2})^{-1}
+\end{equation}
+The C program updates the coefficients in the biquad based on the user input every 5 milliseconds and then uses the force reading calculated from the load cell voltage as the input to a function cascade() that computes the velocity of the idealized reference system. The C program also calculates the speed of the motor from the optical encoder readings, from which it can determine the speed of the cart for comparison. The cascade() function is called once more to implement the controller and determine the control voltage to be sent to the amplifier. 
