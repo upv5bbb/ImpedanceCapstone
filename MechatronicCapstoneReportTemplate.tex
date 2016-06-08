@@ -16,6 +16,7 @@
 \usepackage{amsmath}                % for log-like symbols
 \usepackage{color}
 \usepackage{dtklogos}
+\usepackage{listings}
 \newcommand{\bra}[1]{\langle #1|}
 \newcommand{\ket}[1]{|#1\rangle}
 \newcommand{\braket}[2]{\langle #1|#2\rangle} 
@@ -68,6 +69,94 @@
 \subsubsection*{ --- Code}
 \begin{enumerate}
 \item{MATLAB analysis and design}   {\color{red}\bf{*}}
+\begin{enumerate}
+\item{Functional Specifications Mapping}
+\begin{verbatim}
+%   Functional Specifications Mapping
+%   Nathan Dabling
+%   Impedance Control 2016
+clear all
+close all
+clc
+
+%% System Requirements
+M = .476;      % Mass (kg)
+OS = 5;        % Percent Overshoot
+B = 0;         % Bearing Damping (Ns/m)
+J = 1.14e-5;   % Motor inertia (kg*m^2)
+Km = .058;     % Motor Constant  (N/A)
+Ka = .4;       % Current Amp Gain  (A/V)
+r = .0183/2;   % Timing Pulley Radius (m)
+N = 230/39;    % Gear Ratio
+% Damping Ratio
+zeta = abs(log((OS)/100))/...
+(sqrt(pi^2+(log(OS/100))^2));    
+Ts = .15;         % Settling Time (s)
+wn = 4/zeta/Ts;   % Natural Freq (rad/s)
+	
+%% Define Plant and Kp
+% Proportional Gain from PI
+Kp = (2*zeta*wn*(r*(M+J*((N^2)/...
+(r^2))))-B/r)/(Ka*Km*N);        
+% Integral Gain
+Ki = wn^2*(r*(M+J*((N^2)/(r^2))))/Ka/Km/N;          
+		
+%% Mapping Functional Specifications
+K_ref = 5;      % Reference Stiffness   
+I_limit = 4.8;  % Maximum Amp Current
+% Transfer Function: Force to Motor vel
+FtoVMF = tf(1,[(M+(J*N^2)/(r^2)) ...
+B*(N^2)/(r^2)]); 
+% Transfer Function: Err to Motor current
+ERRtoI = feedback(tf([Kp*Ka Ki*Ka], ...
+[1 0]),tf(Km*N,[r*(M+J*(N^2)/(r^2)) ...
+B*(N^2)/(r^2)]));
+l = 15;     % Resolution of mapping
+% Range of mass values to be tested
+M_map = linspace(.01,2,l); 
+% Range of damping values to be tested
+B_map = linspace(1,100,l);
+F = zeros(l,l);
+% Counter for Force value iterations
+k_count = zeros(l,l); 
+a = 1;     % Counter for force values
+for j = 1:l
+for i = 1:l
+k = 1;
+err = 1;
+F_map = 1;
+% Transfer Function: Force to Ref velocity
+FtoV_map = tf([1 0],[M_map(i) B_map(j) K_ref]);
+FtoVA_map = FtoV_map-FtoVMF;
+% Transfer Function: Force to Motor current
+FtoI_map = series(FtoVA_map,ERRtoI);
+while abs(err) > .1
+k=k+1;
+FtoI_map_info = stepinfo(F_map*FtoI_map);
+% Maximum current from a step input
+I_max = FtoI_map_info.Peak;
+err = I_max-I_limit;
+if err < 0
+F_map = F_map*(1+1/k);
+end
+if err> 0
+F_map = F_map*(1-1/k);
+end 
+k_count(i,j)=k;
+end
+F(j,i) = F_map;
+a=a+1;
+end
+end
+kavg = mean(mean(k_count))
+figure
+surf(M_map,B_map,F);
+xlabel('Virtual Mass (kg)')
+ylabel('Virtual Damping (Ns/m)')
+zlabel('Force Input (N)')
+colorbar
+\end{verbatim}
+\end{enumerate}
 \item{C-Code} {\color{red}\bf{*}}
 \end{enumerate}
 \subsubsection*{ --- Major components list for prototype}
