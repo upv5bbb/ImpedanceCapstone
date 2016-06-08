@@ -1,7 +1,7 @@
 \subsubsection*{ ---Analysis}
 Based on the design described in previous sections, a Simulink model of the closed loop system is created. The block diagram is similar to the control loop in 'Variable Impedance Based Human Machine Control for Docking of Manufacturing Fixtures'\cite{toni}. Shown in Figure \ref{fig:ControlLoop}, the model is split into four subsystems: Human Input, Reference System, Motor and Cart Plant. The simulation is based on a continuous control scheme. It first calculates the reference speed based on human input calculate the error between reference speed and actual speed. The error is then used as the input for PI controller to calculate the required power output that drives the motor plant.
 
-\begin{figure*}[htbp]
+\begin{figure*}[ht]
 \centering
 \includegraphics[width=1\linewidth]{Images/ControlLoop}
 \caption{Block diagram of the impedance controller. Consists of human input; a reference system with mass, spring and damping parameters from user input; a motor plant and a modeled cart plant}
@@ -12,7 +12,7 @@ Human input for the model has three modes of inputs. Mode 0 is a standard step i
 
 The reference system depicts the reaction of a mass-spring-damper setup to a specified input force. A illustrative graph for it is shown in Figure \ref{MSB}. In our model, it is assumed that the spring is always relaxed at the mass's initial position. It also assumes the system has no friction. It will simulate the mass's acceleration, velocity and position based on human input. The simulated speed is then used as reference for the closed loop control system.
 
-\begin{figure}[htbp]
+\begin{figure}[h]
 	\centering
 	\includegraphics[width=0.5\linewidth]{Images/MSB}
 	\caption{Reference System}
