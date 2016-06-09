@@ -1,3 +1,13 @@
 This is BibTeX, Version 0.99dThe top-level auxiliary file: MechatronicCapstoneReportTemplate.aux
 The style file: plain.bst
 Database file #1: Mechatronics.bib
+Warning--I didn't find a database entry for "Bendat1971"
+Warning--I didn't find a database entry for "PhysRev.104.563"
+Warning--I didn't find a database entry for "Oppenheim1975"
+Warning--I didn't find a database entry for "Papoulis1965"
+Warning--I didn't find a database entry for "Lamport1994"
+Too many commas in name 1 of "W. Tony Piaskowy, Lance McCann, Joseph Garbini, Santosh Devasia" for entry toni
+while executing---line 1049 of file plain.bst
+Too many commas in name 1 of "W. Tony Piaskowy, Lance McCann, Joseph Garbini, Santosh Devasia" for entry toni
+while executing---line 1090 of file plain.bst
+(There were 2 error messages)

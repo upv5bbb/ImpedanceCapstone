@@ -1,4 +1,3 @@
-\subsection*{---Functional Specifications}
 At the beginning of the design phase, we set target functional specifications. We tried to make ambitious but attainable goals. Using the targets we were able to size the motor and amplifier we would need.In selecting a motor, a reference had to be used to run simulations, so a motor with torque constant of .11 N/m was used in tandem with an amplifier with a gain of .79 A/V. Using these sample motor and amplifier constants in the model, we ran simulations through Simulink to verify that such a motor amplifier combination would suffice by checking the maximum current, voltage, torque and rpm required against what the motor and amp could supply. Cases with low mass and damping proved to have the highest torque and current requirements because the velocity profile of such a system would involve very high accelerations. From the results we decided that damping must always be included in the reference system to limit the necessary torque.
 
 After the design was finalized we developed a functional specification mapping to guide the user's inputs. The motivation for this was observing that the low mass, low damping case performed reasonably well as long as the force input was small. In addition, a greater force could be applied if either the damping or mass was increased. This led to the conclusion that the limitations on the reference system parameters were actually coupled. Considering the restrictions that either increasing the mass or the damping would put on the acceleration of the reference system for a given force input, this conclusion seemed logical. To create the mapping, we calculated the transfer function relating the force input to the required motor current.\begin{equation}
@@ -12,7 +11,7 @@ Where
 \begin{figure*}[th]
 \centering
 \includegraphics[width=1\linewidth]{Images/Functional_Specifications_Mapping}
-\caption{}
+\caption{3D mapping of the maximum human input force for varying virtual mass and damping. Virtual stiffness set to 5 N/m}
 \label{fig:Functional_Specifications_Mapping}
 \end{figure*}
 
