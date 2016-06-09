@@ -16,7 +16,7 @@ After completing the dynamic modeling and simulation, the mechanical design was 
 \end{figure}
 On the cart, there is a handle which is preloaded by an M10 Bolt onto a button load cell. Both the cart and handle are 3D printed. The user will apply a force to the handle sensed by the load cell which will be the input for our computer model and the cart should move accordingly based on the reference model. The challenge is to ensure that the force from the user is all transmitted to the load cell for an accurate input to the system model. One can imagine that as the handle is preloaded, there will more friction to overcome.
 
-The first step to tackle this problem is to use small aluminum connecting plates on both sides of the handle that contact the load cell and preload. Since the handle was 3D printed PLA, the pressure from small contacting point of the load cell and the preload would only deform the soft PLA material. Adding the aluminum connecting plates allows for a stiffer area of contact and a consistent force to be applied to the load cell.
+The first step to tackle this problem is to use small aluminum connecting plates on both sides of the handle that contact the load cell and M10 preload bolt. Since the handle was 3D printed PLA, the pressure from small contacting point of the load cell and the M10 bolt would only deform the soft PLA material. Adding the aluminum connecting plates allows for a stiffer area of contact and a consistent force to be applied to the load cell.
 
 \begin{figure}[h]
 	\centering
@@ -25,7 +25,7 @@ The first step to tackle this problem is to use small aluminum connecting plates
 	\label{fig:Recirculating_Ball_Track}
 \end{figure}
 
-Taking a closer look, the handle is screwed on to a recirculating ball track as shown in Figure \ref{fig:Recirculating_Ball_Track}. The recirculating ball track is a key component to the mechanical design. Since the slider moves purely in a linear motion along the track, it minimizes friction and ensures that any force, even a torque, applied to the handle is completely transmitted to the load cell. Figure \ref{fig:Ball_Track_Cross_Section} shows a cross section of the handle and how it connects to the load cell, preload, ball track, and the rest of the cart. A labeled figure of the entire system is shown in Figure \ref{fig:Annotated_Front}.
+Taking a closer look, the handle is screwed on to a recirculating ball track as shown in Figure \ref{fig:Recirculating_Ball_Track}. The recirculating ball track is a key component to the mechanical design. Since the slider moves purely in a linear motion along the track, it minimizes friction and ensures that any force, even a torque, applied to the handle is completely transmitted to the load cell. Figure \ref{fig:Ball_Track_Cross_Section} shows a cross section of the handle and how it connects to the load cell, M10 preload bolt, ball track, and the rest of the cart. A labeled figure of the entire system is shown in Figure \ref{fig:Annotated_Front}.
 
 
 \begin{figure}[h]
@@ -39,7 +39,7 @@ When designing the cart, PLA creep stiffness was not taken into account. Due to 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=1\linewidth]{Images/Annotated_Front}
-	\caption{}
+	\caption{Labeled Front View}
 	\label{fig:Annotated_Front}
 \end{figure}
 \begin{figure}[h]	
