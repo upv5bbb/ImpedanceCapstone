@@ -26,6 +26,34 @@
 
 \item{Electrical (individual components and connections)}
 \input{Appendix_Electrical}
-\item{Computer Hardware}
 \item{Software Descriptions (flow charts, hierarchical diagrams, etc.)}
+
+\begin{verbatim}
+Main()
+|_AIO_initialize()
+|_Aio_Write()
+|_EncoderC_initialize()
+|_Irq_RegisterTimerIrq()
+|_pthread_create()
+|	|_Timer_Irq_Thread()
+|	|	|Aio_Read()
+|	|	|Cascade()
+|	|	|_vel()
+|	|	|	|_Encoder_Counter()
+|	|	|_Cascade()
+|	|	|_ Aio_Write()
+|   |	|_roundf()
+|	|	|_Irq_Acknowledge()
+|	|	|_openmatfile()
+|	|	|_matfileaddstring()
+|	|	|_matfileaddmatrix()
+|	|	|_matfile_close()
+|   |	|_pthread_exit()
+|_pthread_create()
+|	|_Table_Update_Thread()
+|	|	|_nanosleep()
+|	|	|_update()
+|	|	|_pthread_exist()
+|_    Irq_UnregisterTimerIrq()
+\end{verbatim}
 \end{enumerate}
