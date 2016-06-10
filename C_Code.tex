@@ -309,7 +309,7 @@ MATFILE *mf;
 int err;
 mf = openmatfile("Lab.mat", &err);
 if(!mf) printf
-("Can’t open mat file %d\n", err);
+("Can't open mat file %d\n", err);
 matfile_addmatrix
 (mf, "Velocity", spdbuffer, IMAX, 1, 0);
 matfile_addmatrix
