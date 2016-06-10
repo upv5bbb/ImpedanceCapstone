@@ -1,0 +1,399 @@
+\subsubsection*{C-Code}
+\item{Control Code}
+\begin{verbatim}
+/* Impedance Control */
+
+/* includes */
+#include "stdio.h"
+#include "MyRio.h"
+#include "me477.h"
+#include <string.h>
+#include "ctable.h"
+#include "TimerIRQ.h"
+#include "IRQConfigure.h"
+#include <pthread.h>
+#include "Encoder.h"
+#include "math.h"
+#include "matlabfiles.h"
+
+struct biquad {
+double b0; double b1; double b2; 
+// numerator
+double a0; double a1; double a2; 
+// denominator
+double x0; double x1; double x2; 
+// input
+double y1; double y2; }; // output
+//int timeoutValue;
+#include "ControllerHeader.h"
+
+/* prototypes */
+void *Timer_Irq_Thread(void* resource);
+void *Table_Update_Thread(void* resource);
+double cascade(int ns, double xin, 
+struct biquad *fa);
+double vel(void);
+void wait(void);
+
+/* definitions */
+MyRio_Aio CI0;
+MyRio_Aio CO0;
+typedef struct {NiFpga_IrqContext irqContext; 
+// context
+struct table *a_table; // table
+NiFpga_Bool irqThreadRdy; // ready flag
+} ThreadResource;
+typedef struct {int looptime_ns; // table
+NiFpga_Bool upThreadRdy; // ready flag
+} upThreadResource;
+NiFpga_Session myrio_session ;
+static MyRio_Encoder encC0;
+#define IMAX 5000 // max points
+#define VLimit 5 // max VDAout
+static double IniForce, Total=0.0;
+static int k = 1,l=1; // force benchmarking
+
+int main(int argc, char **argv)
+{
+NiFpga_Status status;
+
+status = MyRio_Open();  	
+/*Open the myRIO NiFpga Session.*/
+if (MyRio_IsNotSuccess(status)) 
+return status;
+
+// Initialize Table
+char *Table_Title ="Control Table";
+static struct table my_table[] = {
+{"V_ref: m/s ", 0, 0.0 },
+{"V_act: m/s ", 0, 0.0 },
+{"VDAout: mV ", 0, 0.0 },
+{"M: kg ", 1, 5.0 },
+{"K: N/m ", 1, 5.0 },
+{"B: N*s/m ", 1, 25.0 },
+{"BTI: ms ", 1, 5.0 },
+{"Force: N", 0, 0.0}
+};
+
+MyRio_IrqTimer irqTimer0;
+ThreadResource irqThread0;
+upThreadResource updateThread;
+pthread_t thread;
+pthread_t thread2;
+// Specify IRQ channel settings
+irqTimer0.timerWrite = IRQTIMERWRITE;
+irqTimer0.timerSet = IRQTIMERSETTIME;
+timeoutValue = 5000;
+// Initialize analog interfaces 
+// before allowing IRQ
+AIO_initialize(&CI0, &CO0); 
+// initialize analog I/O
+Aio_Write(&CO0, 0.0); 
+// zero analog output
+// Initialize encoder
+EncoderC_initialize(myrio_session,&encC0);
+// Configure Timer IRQ. 
+//Terminate if not successful
+status = Irq_RegisterTimerIrq(
+&irqTimer0,
+&irqThread0.irqContext,
+timeoutValue);
+// Set the indicator 
+// to allow the new thread.
+irqThread0.irqThreadRdy = NiFpga_True;
+irqThread0.a_table = my_table;
+// Create new thread to catch the IRQ.
+status = pthread_create(&thread,
+NULL,
+Timer_Irq_Thread,
+&irqThread0);
+// Create new thread to update table
+updateThread.looptime_ns = 500000000L; 
+// 0.5 s
+updateThread.upThreadRdy = NiFpga_True;
+status = pthread_create( &thread2,
+NULL,
+Table_Update_Thread,
+&updateThread);
+ctable(Table_Title,my_table,8);
+
+updateThread.upThreadRdy = NiFpga_False;
+irqThread0.irqThreadRdy = NiFpga_False;
+pthread_join(thread, NULL);
+pthread_join(thread2, NULL);
+status = Irq_UnregisterTimerIrq(
+&irqTimer0,
+irqThread0.irqContext);
+
+status = MyRio_Close();  
+/*Close the myRIO NiFpga Session. */
+return status;
+}
+
+// Check for speed difference 
+//and decide corresponding voltage output
+void *Timer_Irq_Thread(void* resource){
+ThreadResource* threadResource
+ = (ThreadResource*) resource;
+double *vref = &((threadResource
+->a_table+0)->value);
+double *vact = &((threadResource
+->a_table+1)->value);
+double *VDAout = &((threadResource
+->a_table+2)->value);
+double *M = &((threadResource
+->a_table+3)->value);
+double *K = &((threadResource
+->a_table+4)->value);
+double *B = &((threadResource
+->a_table+5)->value);
+double *BTI = &((threadResource
+->a_table+6)->value);
+double *Force = &((threadResource
+->a_table+7)->value);
+double error;
+double VADin;
+double alpha;
+double spdbuffer[IMAX],posbuffer[IMAX],
+forcebuffer[IMAX]; // speed buffer
+double *sbp = spdbuffer,*pbp = posbuffer,
+*fbp = forcebuffer;// buffer pointer
+static double ref[3];
+static int i = 1,j = 1;
+double BTIp;
+int VLimitFlag = 0;
+static struct biquad RefSys[] =
+{{0, 0, 0,
+1, 0, 0, 0, 0, 0, 0, 0}};
+/*//---PI controller
+int myFilter_ns = 1;  // number of sections
+static	struct	biquad myFilter[]={ 	
+// define the array 
+//of floating point biquads
+{3.089502e+01, -2.685314e+01, 
+0.000000e+00, 1.000000e+00,
+ -1.000000e+00, 0.000000e+00,
+  0, 0, 0, 0, 0}
+};*/
+
+// in case controller.h not updated
+while (threadResource->irqThreadRdy 
+== NiFpga_True) {
+uint32_t irqAssert = 0;
+Irq_Wait( threadResource->irqContext,
+TIMERIRQNO,
+&irqAssert,
+(NiFpga_Bool*) &(threadResource
+->irqThreadRdy));
+
+NiFpga_WriteU32( myrio_session,
+IRQTIMERWRITE,
+*BTI*1000);
+NiFpga_WriteBool( myrio_session,
+IRQTIMERSETTIME,
+NiFpga_True);
+if(irqAssert) {
+while (l < 20){
+wait();
+l++;
+} // avoid collecting data 
+//during initial voltage spike
+while (k<=10000) {
+IniForce = Aio_Read(&CI0); 
+// log a benchmark for 
+// force calculation at the beginning
+Total = Total +IniForce;
+k++;
+}
+if (i == 1){
+IniForce = Total/(k-1);
+printf("\nCaliberation Done");
+}
+// Reading Force from Load Cell
+VADin = Aio_Read(&CI0);
+if ((VADin-IniForce)<1/124.2 && 
+(VADin-IniForce)>-1/124.2){
+VADin = IniForce;
+}
+*Force =(VADin-IniForce)*124.1897;
+//Reference System Filter
+int RefFilter_ns = 1;
+ // No. of sections
+alpha = 1/(2*(*M)/(.001*(*BTI))
++*B+(*K)*(*BTI)*.001/2);
+RefSys->b0 = alpha;
+RefSys->b2 = -alpha;
+RefSys->a1 = alpha*((*K)*((*BTI)*.001)
+-4*(*M)/(.001*(*BTI)));
+RefSys->a2 = alpha*(2*(*M)/
+(.001*(*BTI))-*B+(*K)*(.001*(*BTI))/2);
+if (*VDAout>VLimit*1000 ||
+ *VDAout<-VLimit*1000){ // In mV
+VLimitFlag = 1;
+}
+if (VLimitFlag == 1 && 
+*VDAout > (VLimit-1)) {
+*Force =0;
+}
+if (*VDAout <=(VLimit-1)){
+VLimitFlag =0;
+}
+*vref = cascade
+(RefFilter_ns,*Force,RefSys);
+// Calculate speed, error and voltage
+double velocity = vel();
+*vact = velocity/2048/5.9/
+(*BTI*0.001)*M_PI*0.01834;
+error=(*vref-*vact);
+//error = (0-*vact);	
+// for setting motor to 0 rpm
+*VDAout = -cascade
+(myFilter_ns ,error, myFilter);
+// Cap voltage output
+if (*VDAout>VLimit) {
+*VDAout = VLimit;
+} else if(*VDAout<-VLimit){
+*VDAout = -VLimit;
+}
+
+if (*VDAout >=VLimit ||*VDAout<=-VLimit){
+if (j==1){
+putchar_lcd(208);
+putchar_lcd(216);
+putchar_lcd(220);
+}
+if (j < 100){
+j ++;
+}
+if (j ==100 ){
+j = 1;
+}
+}
+Aio_Write(&CO0, *VDAout);
+if (i == 1){
+ref[0] = *M;
+ref[1] = *K;
+ref[2] = *B;
+i++;
+}
+if (ref[0]!=*M || ref[1]!=*K
+ || ref[2]!=*B){
+sbp = spdbuffer;
+pbp = posbuffer;
+fbp = forcebuffer;
+ref[0] = *M;
+ref[1] = *K;
+ref[2] = *B;
+}
+if (sbp < spdbuffer+IMAX) {
+*sbp++ = *vact;
+*pbp++ = *vref;
+*fbp++ = *Force;
+}
+
+//round vdaout for display
+*vact = roundf(*vact*100)/100;
+*vref = roundf(*vref*100)/100;
+*Force = roundf(*Force*100)/100;
+*VDAout = roundf(*VDAout * 100)/100;
+*VDAout = *VDAout*1000;
+Irq_Acknowledge(irqAssert);
+}
+}
+
+MATFILE *mf;
+int err;
+mf = openmatfile("Lab.mat", &err);
+if(!mf) printf
+("Can’t open mat file %d\n", err);
+matfile_addmatrix
+(mf, "Velocity", spdbuffer, IMAX, 1, 0);
+matfile_addmatrix
+(mf, "V_Reference", posbuffer, IMAX, 1, 0);
+matfile_addmatrix
+(mf, "Force", forcebuffer, IMAX, 1, 0);
+matfile_addmatrix
+(mf, "Reference_System", ref, 3, 1, 0);
+matfile_addmatrix
+(mf, "BTI", &BTIp, 1, 1, 0);
+matfile_close(mf);
+pthread_exit(NULL);
+return NULL;
+}
+
+// call update every 0.5s
+void *Table_Update_Thread(void* resource){
+upThreadResource* threadResource
+ = (upThreadResource*) resource;
+
+while (threadResource
+->upThreadRdy == NiFpga_True) {
+struct timespec timeOut,remains;
+timeOut.tv_sec = 0;
+timeOut.tv_nsec = 
+threadResource->looptime_ns;
+nanosleep(&timeOut, &remains);
+update();
+}
+pthread_exit(NULL);
+return NULL;
+}
+
+
+double cascade
+(int ns, double xin, struct biquad *fa){
+static char i;
+static double y0;
+struct biquad *f;
+f = fa;
+y0 = xin;            	
+ // pass the input to 
+ // the first biquad in the cascade
+for (i=0; i<ns; i++) {   
+ // loop through the "ns" biquads
+f->x0 =y0;      	  
+ // pass the output to the next biquad
+y0 = ( f->b0*f->x0 + f->b1*f->x1 
++ f->b2*f->x2 - f->a1*f->y1 -
+ f->a2*f->y2 )/f->a0;
+f->x2 = f->x1;  	 
+// Update the input history of this biquad
+f->x1 = f->x0;
+f->y2 = f->y1;  
+// Update the output history of this biquad
+f->y1 = y0;
+f++;      // point to the next biquad
+}
+return y0; 
+// return the output of the cascade
+}
+
+//report counter difference 
+// obtianed from encoder counter
+double vel(void){
+double velocity;
+static int count,countn;
+static int i = 1;
+countn = Encoder_Counter(&encC0);
+if (i == 1){
+count = countn;
+i++;
+}
+velocity = countn-count;
+count = countn;
+return (double) velocity;
+}
+
+/* create a short wait time*/
+void wait(void) {
+uint32_t i;
+i = 4170000;
+while(i>0){
+i--;
+}
+return;
+}
+
+
+
+\end{verbatim}

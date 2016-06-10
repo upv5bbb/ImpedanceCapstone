@@ -3,7 +3,7 @@ The closed loop continuous time transfer function of the complete system was
 \begin{equation}
 v_{act}=\frac{s^{2}}{s^{2}+\frac{K_{P}K_{A}K_{M}N}{r(M+\frac{JN^{2}}{r^{2}})}s+\frac{K_{I}K_{A}K_{M}N}{r(M+\frac{JN^{2}}{r^{2}})}}
 \end{equation}
-which is second order. This fact allowed us to find the controller gains analytically from specific relations between the damping ratio and natural frequency of a second order system and its overshoot and settling time, respectively. The damping ratio can be related to the overshoot by
+which is second order. This fact enabled the controller gains to be found analytically from specific relations between the damping ratio and natural frequency of a second order system and its overshoot and settling time, respectively. The damping ratio can be related to the overshoot by
 \begin{equation}
 \zeta=|\frac{\ln{\frac{OS}{100}}}{\sqrt{\pi^{2}+(ln{\frac{OS}{100}})^{2}}}|
 \end{equation}
@@ -22,12 +22,12 @@ K_{I}=\frac{\omega_{n}^{2}r(M+\frac{JN^{2}}{r^{2}})}{K_{A}K_{M}N}
 \begin{equation}
 K_{P}=\frac{2\omega_{n}\zeta r(M+\frac{JN^{2}}{r^{2}})}{K_{A}K_{M}N}
 \end{equation}
-With these gains, we used MATLAB's "c2d" built-in function to develop a biquad cascade of the discrete time transfer function of the controller utilizing Tustin's approximation. This was written to a header file for C that could be used in the final program.
-In addition to finding the appropriate control gains and implementing them through a biquad cascade, we needed to also develop a biquad cascade, by hand, for computing the response of the reference system to the human input force. MATLAB was not used because we wanted a symbolic relationship between the coefficients of the biquad and the reference system parameters in order to enable the user to update the mass, spring and damping while the program was running. The reference system's continuous time transfer function was
+With these gains, MATLAB's "c2d" built-in function was used to develop a biquad cascade of the discrete time transfer function of the controller utilizing Tustin's approximation. This was written to a header file for C that could be used in the final program.
+In addition to finding the appropriate control gains and implementing them through a biquad cascade, a biquad cascade was found, by hand, for computing the response of the reference system to the human input force. MATLAB was not used because a symbolic relationship was needed between the coefficients of the biquad and the reference system parameters in order to enable the user to update the mass, spring and damping while the program was running. The reference system's continuous time transfer function was
 \begin{equation}
 \frac{v_{ref}}{F}=\frac{s}{M_{ref}s^{2}+B_{ref}s+K_{ref}}
 \end{equation}
-To compute Tustin's approximation for a discrete time transfer function, a substitution for s can be made
+To compute Tustin's approximation for a discrete time transfer function, a substitution for "s" can be made
 \begin{equation}
 s=\frac{2(1-z^{-1})}{T(1+z^{-1})}
 \end{equation}

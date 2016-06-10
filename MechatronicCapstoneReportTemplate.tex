@@ -23,21 +23,16 @@
 \newcommand{\braket}[2]{\langle #1|#2\rangle} 
 
 \begin{document}	%  <--- Here is where the document starts
-
+%---Document Title
 \input{Title}
-
 %---Executive Summary
 \input{Executive_Summary}
-
 %---Introduction
 \input{Introduction}
-
 %---The Design
 \input{Design} 
-
 %---Prototype
 \input{Prototype}
-
 %---Risk and Liability
 \input{Risk}
 %---Ethical Issues
@@ -50,76 +45,12 @@
 \input{Cost}
 %---Codes and Standards
 \input{Codes}
-
 %---Conclusions
 \input{Conclusions}
-
 %---Bibliography
 \input{Bibliography}
-
 %---Appendices
-\subsection*{Appendices{\color{red}\ *}}
-\subsubsection*{ --- Drawings}
-\begin{enumerate}
-\item{Mechanical}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=1\linewidth]{Images/Motor_Connector2}
-\caption{Motor Mounting Plate}
-\label{fig:Motor_Connector2}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=1\linewidth]{Images/Load_Cell_Plate}
-\caption{Load Cell Plate}
-\label{fig:Load_Cell_Plate}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=1\linewidth]{Images/Preload_Plate}
-\caption{Preload Plate}
-\label{fig:Preload_Plate}
-\end{figure}
-
-
-\item{Electrical (individual components and connections)}
-\item{Computer Hardware}
-\item{Software Descriptions (flow charts, hierarchical diagrams, etc.)}
-\end{enumerate}
-
-\subsubsection*{ --- Code}
-\begin{enumerate}
-\input{MATLAB_CODE.tex}
-\item{C-Code} {\color{red}\bf{*}}
-\end{enumerate}
-\subsubsection*{ --- Major components list for prototype}
-\begin{enumerate}
-\item{Manufacturer}
-\item{Model number}
-\item{Cost}
-\end{enumerate}
-
-
-\begin{table}[H]
-	\centering
-	\caption{Major Components}
-	\label{major_components}
-	\begin{tabular}{|l|l|l|l|}
-		\hline
-		Manufacturer & Model Number & \multicolumn{1}{c|}{Part} & Cost      \\ \hline
-		&              & Load Cell                 & \$66.88   \\ \hline
-		&              & V-Slot Track Setup        & \$108.64  \\ \hline
-		&              & Pittman Motor             & \$318.00  \\ \hline
-		&              & MyRIO                     & \$1000.00 \\ \hline
-		&              & Switch Box + Relays       & \$35.44   \\ \hline
-		&              & PLA Filament              & \$50.00   \\ \hline
-		&              & All Fasteners             & \$7.36    \\ \hline
-		\multicolumn{3}{|c|}{Total Costs}                       & \$1584.67 \\ \hline
-	\end{tabular}
-\end{table}
+\input{Appendices}
 
 \newpage
 \subsubsection*{Here are some \LaTeX\ examples.} 
