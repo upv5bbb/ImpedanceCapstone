@@ -3,8 +3,8 @@ With the design of the mechanical, electrical, computational/software systems ha
 \vspace{.167in}
 \noindent\underline{Electrical to Mechanical system:}\par
 \vspace{.08in}
-Firstly for the load cell, it would be the design on how the load cell will be mounted to allow it to detect human force input in the desired direction, and how to pre-load the load cell in order to allow it to sense forces in two-directions. This resulted with the design of the cart and handle, its metal plate braces and using the M10 bolt to pre-load the load cell.\par
-Secondly for the motor, it would be the design on how to mount the motor to be at the right height when pulling the cart and how the cart will hit the limit switches at the either end of the track. This resulted with the design of the motor mount and the limit stops.\par
+The load cell must be mounted to allow it to detect human force input in the desired direction, and must be pre-loaded in order for it to sense forces in two directions. The result is the design of the cart and handle, its metal plate braces and the M10 bolt to pre-load the load cell.\par
+Secondly, the motor must be mounted at the right height when pulling the cart and the cart needs to make contact with the limit switches at the either end of the track. The result is the design of the motor mount and the limit stops.\par
 \vspace{.167in}
 \noindent\underline{Computational/Software to Electrical system:} \par
 \vspace{.08in}
@@ -16,7 +16,7 @@ The interaction between the software and the electrical system is the most cruci
 \label{LC_cali}
 \end{center}
 \end{figure}
-The calibration of the load cell is done by testing its voltage output using a known mass, then the data points are plotted in Figure \ref{LC_cali} and the linear fit coefficients found are implemented into the C code to convert voltage to force reading.\par
+The calibration of the load cell is done by testing its voltage output using a known mass. The data is then plotted, as seen in Figure \ref{LC_cali}, and the linear fit coefficients found are implemented into the C code to convert voltage to force reading.\par
 The calibration of the encoder is done by using equation \ref{Veq}:
 \begin{equation}
 \label{Veq}
