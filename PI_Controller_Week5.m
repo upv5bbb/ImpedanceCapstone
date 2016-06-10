@@ -7,7 +7,7 @@ close all
 clc
 
 %% System Requirements
-M =  0.496+0.098+0.0045+0.003;          % Mass
+M =  0.6015;          % Mass
 OS = 5;        % Percent Overshoot
 B = .00;       % Bearing Damping
 %J = 7.06e-6;       % Wheel and Motor inertia
@@ -18,7 +18,8 @@ c = 2*pi*r;
 N = 230/39;        % Gear Ratio
 vol_limit = 24;
 Rmot = 4;
-zeta = abs(log((OS)/100))/(sqrt(pi^2+(log(OS/100))^2));    % Damping Ratio
+zeta = abs(log((OS)/100))/...
+    (sqrt(pi^2+(log(OS/100))^2));    % Damping Ratio
 Ts = 0.15;           % Settling Time
 wn = 4/zeta/Ts;   % Natural Frequency
 %% Define Plant and Kp
@@ -159,3 +160,26 @@ if fid~=1
     fclose(fid);
 end 
 return
+%% Validation
+% import data from C then run section
+input_mode = 1;
+M_desired = Reference_System(1,1);
+K_desired = Reference_System(2,1);
+B_desired = Reference_System(3,1);
+Fss = 2.4627;
+T = 0.005:0.005:(size(Velocity))*0.005;
+error = mean(Velocity-V_Reference);
+Fs = timeseries(Force,T);
+Fs.Data(1) = 0.00001;
+sim('Impedance_Controller_Week5',[0 (length(Velocity))*0.005]);
+figure();hold on
+plot(T,Velocity)
+plot(T,V_Reference)
+plot(mot_spd)
+plot(ref_spd)
+legend('actual','ref_C','model','ref_S')
+axis([0 (length(Velocity)-1)*0.005 min(Velocity)-0.1 max(Velocity)+0.1])
+title(['M = ' num2str(M_desired) '(kg) K = '...
+        num2str(K_desired) '(N/m) B = ' num2str(B_desired)...
+        '(N/(m/s))'])
+xlabel('Time(s)');ylabel('Velocity(m/s)');
