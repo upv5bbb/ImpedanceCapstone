@@ -59,7 +59,8 @@ NiFpga_Status status;
 
 status = MyRio_Open();  	
 /*Open the myRIO NiFpga Session.*/
-if (MyRio_IsNotSuccess(status)) return status;
+if (MyRio_IsNotSuccess(status)) 
+return status;
 
 // Initialize Table
 char *Table_Title ="Control Table";
