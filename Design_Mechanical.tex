@@ -8,7 +8,7 @@ After completing the dynamic modeling and simulation, the mechanical design was 
 	\label{fig:Isometric_Full_View}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}
 	\begin{center}
 		\includegraphics[width=1\columnwidth]{Images/Iso_Real_Full}
 		\caption{Actual Prototype}
@@ -16,7 +16,7 @@ After completing the dynamic modeling and simulation, the mechanical design was 
 	\end{center}
 \end{figure}
 
-On the cart, there is a handle which is preloaded by an M10 Bolt onto a button load cell. Limit stops were hot glued to the bottom of the cart to hit the limit switches at the ends of the track which would turn off the system if anything went wrong. The cart, handle, and limit stops were 3D printed. The user will apply a force to the handle sensed by the load cell which will be the input for our computer model and the cart should move accordingly based on the reference model. The challenge is to ensure that the force from the user is all transmitted to the load cell for an accurate input to the system model. One can imagine that as the handle is preloaded, there will more friction to overcome.
+On the cart, there is a handle which is preloaded by an M10 bolt onto a button load cell. Limit stops were hot glued to the bottom of the cart to hit the limit switches at the ends of the track which would turn off the system if anything went wrong. The cart, handle, and limit stops were 3D printed. The user will apply a force to the handle sensed by the load cell which will be the input for the computer model and the cart should move accordingly based on the reference model. The challenge is to ensure that the force from the user is all transmitted to the load cell for an accurate input to the system model. One can imagine that as the handle is preloaded, there will more friction to overcome.
 
 The first step to tackle this problem is to use small aluminum connecting plates on both sides of the handle that contact the load cell and M10 preload bolt. Since the handle was 3D printed PLA, the pressure from small contacting point of the load cell and the M10 bolt would only deform the soft PLA material. Adding the aluminum connecting plates allows for a stiffer area of contact and a consistent force to be applied to the load cell.
 
@@ -44,7 +44,7 @@ Taking a closer look, the handle is screwed on to a recirculating ball track as 
 \end{figure}
 When designing the cart, PLA creep stiffness was not taken into account. Due to the rather elastic PLA material, a constant decrease in the preload would occur. This caused inconsistent force readings from the load cell. To counter this problem, two aluminum reinforcing plates were machined and held by threaded rods shown in Figure \ref{fig:Annotated_Iso}. This helped with the creep and overall cart stiffness, which gave much more accurate force readings from the load cell.
 
-\begin{figure}[H]	
+\begin{figure}
 \centering
 \includegraphics[width=1\linewidth]{Images/Annotated_Iso}
 \caption{Detailed Isometric View}
