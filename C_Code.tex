@@ -49,7 +49,7 @@ NiFpga_Bool upThreadRdy; // ready flag
 NiFpga_Session myrio_session ;
 static MyRio_Encoder encC0;
 #define IMAX 5000 // max points
-#define VLimit 5 // max VDAout
+#define VLimit 10 // max VDAout
 static double IniForce, Total=0.0;
 static int k = 1,l=1; // force benchmarking
 
@@ -214,8 +214,10 @@ VADin = Aio_Read(&CI0);
 if ((VADin-IniForce)<1/124.2 && 
 (VADin-IniForce)>-1/124.2){
 VADin = IniForce;
-}
+} 
+//1N deadband, ignore readings below 1 N
 *Force =(VADin-IniForce)*124.1897;
+//Linear relatitonship from experimental data
 //Reference System Filter
 int RefFilter_ns = 1;
  // No. of sections
@@ -229,11 +231,13 @@ RefSys->a2 = alpha*(2*(*M)/
 (.001*(*BTI))-*B+(*K)*(.001*(*BTI))/2);
 if (*VDAout>VLimit*1000 ||
  *VDAout<-VLimit*1000){ // In mV
+ // chehck if voltage reaches control limit
 VLimitFlag = 1;
 }
 if (VLimitFlag == 1 && 
 *VDAout > (VLimit-1)) {
-*Force =0;
+// cut off force input for reference
+*Force =0; 
 }
 if (*VDAout <=(VLimit-1)){
 VLimitFlag =0;
