@@ -16,26 +16,23 @@
 \usepackage{amsmath}                % for log-like symbols
 \usepackage{color}
 \usepackage{dtklogos}
+\usepackage{listings}
+\usepackage{float}
 \newcommand{\bra}[1]{\langle #1|}
 \newcommand{\ket}[1]{|#1\rangle}
 \newcommand{\braket}[2]{\langle #1|#2\rangle} 
 
 \begin{document}	%  <--- Here is where the document starts
-
+%---Document Title
 \input{Title}
-
 %---Executive Summary
 \input{Executive_Summary}
-
 %---Introduction
 \input{Introduction}
-
 %---The Design
 \input{Design} 
-
 %---Prototype
 \input{Prototype}
-
 %---Risk and Liability
 \input{Risk}
 %---Ethical Issues
@@ -48,34 +45,12 @@
 \input{Cost}
 %---Codes and Standards
 \input{Codes}
-
 %---Conclusions
 \input{Conclusions}
-
 %---Bibliography
 \input{Bibliography}
-
 %---Appendices
-\subsection*{Appendices{\color{red}\ *}}
-\subsubsection*{ --- Drawings}
-\begin{enumerate}
-\item{Mechanical}
-\item{Electrical (individual components and connections)}
-\item{Computer Hardware}
-\item{Software Descriptions (flow charts, hierarchical diagrams, etc.)}
-\end{enumerate}
-
-\subsubsection*{ --- Code}
-\begin{enumerate}
-\item{MATLAB analysis and design}   {\color{red}\bf{*}}
-\item{C-Code} {\color{red}\bf{*}}
-\end{enumerate}
-\subsubsection*{ --- Major components list for prototype}
-\begin{enumerate}
-\item{Manufacturer}
-\item{Model number}
-\item{Cost}
-\end{enumerate}
+\input{Appendices}
 
 \newpage
 \subsubsection*{Here are some \LaTeX\ examples.} 
